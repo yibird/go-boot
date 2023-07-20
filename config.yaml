@@ -1,0 +1,72 @@
+# Redis配置
+redis:
+  db: 0
+  addr: 127.0.0.1:6379
+  password: ""
+
+# Zap配置
+zap:
+  # 日志级别,info用于输出程序的正常运行信息
+  level: info
+  # 日志格式化,可选值 json、console。Zap支持zapcore.JSONEncoder和zapcore.ConsoleEncoder,zapcore.JSONEncoder
+  # 将日志以JSON格式输出,由于JSON格式易于解析和处理,通常适用于生产环境。zapcore.ConsoleEncoder用于将日志以文本输出,
+  # 可读好,通常适用于开发环境
+  format: console
+  # 日志前缀
+  prefix: "go-boot:"
+  # 日志输出目录
+  director: log
+  # 日志文件前缀
+  file-prefix: app-
+  # 是否显示文件的行号
+  show-line: true
+  # 日志编码级别,默认情况下使用 zapcore.LowercaseLevelEncoder 将日志级别编码为小写字符串
+  encode-level: LowercaseColorLevelEncoder
+  # 用于设置日志中的堆栈跟踪字段的键名
+  stacktrace-key: stacktrace
+  # 是否将日志输出到控制台
+  log-in-console: true
+  # 日志文件最大大小(MB),用于日志分割
+  max-size: 10
+  # 保存的历史日志文件数目,用于日志分割
+  max-backups: 5
+  # 保留的最大天数,用于日志分割
+  max-age: 10
+  # 是否支持日志压缩,用于日志分割
+  compress: true
+
+# Viper配置
+
+# Jwt配置
+jwt:
+  # jwt签名
+  signing-key: qmPlus
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: qmPlus
+
+# CORS跨域配置
+cors:
+  # 跨域模式,支持 loose 和 strict,loose表示宽松模式,允许所有请求跨域,strict表示严格模式,将根据白名单的配置进行跨域
+  mode: loose
+  # 跨域白名单,仅在 strict 模式下有效
+  whitelist:
+    - allow-origin: example1.com
+      allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+      allow-methods: POST, GET
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+    - allow-origin: example2.com
+      allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+      allow-methods: POST, GET
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+
+# 系统配置
+system:
+  # 系统环境
+  env: dev
+  # 启动地址
+  addr: 8888
+  # 路由全局前缀
+  router-prefix: ""
+  # 使用数据库类型,支持 mysql、pgsql、oracle、sqlite、mongodb
+  db-type: mysql
