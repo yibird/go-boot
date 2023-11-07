@@ -1,16 +1,10 @@
 package response
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
-)
 
-// ApiResponse 统一响应结构体
-type ApiResponse struct {
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
-	Msg  string      `json:"msg"`
-}
+	"github.com/gin-gonic/gin"
+)
 
 const (
 	SUCCESS = http.StatusOK
@@ -23,6 +17,13 @@ const (
 	ErrorText   = "响应异常"
 	FailText    = "响应失败"
 )
+
+// ApiResponse 统一响应结构体
+type ApiResponse struct {
+	Code int         `json:"code"`
+	Data interface{} `json:"data"`
+	Msg  string      `json:"msg"`
+}
 
 func Result(code int, data interface{}, msg string, c *gin.Context) {
 	c.JSON(http.StatusOK, ApiResponse{

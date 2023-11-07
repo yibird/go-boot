@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"go-boot/global"
 	"go-boot/initialize"
-	"go.uber.org/zap"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func RunServer() {
-	// 初始化所有路由
 	r := initialize.Routers()
-	addr := fmt.Sprintf(":%d", global.CONFIG.System.Addr)
-
+	addr := fmt.Sprintf(":%s", global.CONFIG.System.Addr)
 	// 启动服务
 	r.Run(addr)
 	time.Sleep(10 * time.Microsecond)

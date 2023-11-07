@@ -1,49 +1,56 @@
 -- Chat2DB自然语言转SQL等AI功能 >> https://github.com/alibaba/Chat2DB/blob/main/CHAT2DB_AI_SQL.md
-DROP DATABASE IF EXISTS go-boot;
+DROP DATABASE IF EXISTS `go-boot`;
 
-CREATE DATABASE go-boot;
+CREATE DATABASE `go-boot`;
 
-USE go-boot;
+USE `go-boot`;
 
 DROP TABLE IF EXISTS sys_tenant;
 
-CREATE TABLE
-    sys_tenant (
-                   id BIGINT (20) PRIMARY KEY AUTO_INCREMENT COMMENT '租户id',
-                   tenant_name VARCHAR(100) NOT NULL COMMENT '租户名称',
-                   address VARCHAR(255) COMMENT '地址',
-                   phone VARCHAR(20) COMMENT '电话',
-                   email VARCHAR(100) COMMENT '邮箱',
-                   rent_amount BIGINT NOT NULL COMMENT '租金金额',
-                   deposit_amount BIGINT NOT NULL COMMENT '押金金额',
-                   payment_method TINYINT NOT NULL COMMENT '支付方式(0:现金,1:支付宝,2:微信支付,3:银联支付,4:银行卡,5:虚拟货币)',
-                   start_time DATETIME NOT NULL COMMENT '租约开始时间',
-                   end_time DATETIME NOT NULL COMMENT '租约到期时间',
-                   emergency_contact VARCHAR(100) DEFAULT NULL COMMENT '紧急联系人',
-                   remark VARCHAR(500) DEFAULT NULL COMMENT '备注'
-) engine = INNODB character
-set
-  = utf8mb4 collate = utf8mb4_general_ci row_format = dynamic COMMENT '租户表';
+CREATE TABLE sys_tenant (
+  id BIGINT (20) PRIMARY KEY AUTO_INCREMENT COMMENT '租户id',
+  name VARCHAR(100) NOT NULL COMMENT '租户名称',
+  address VARCHAR(255) COMMENT '地址',
+  phone VARCHAR(20) COMMENT '电话',
+  email VARCHAR(100) COMMENT '邮箱',
+  rent_amount BIGINT NOT NULL COMMENT '租金金额',
+  deposit_amount BIGINT NOT NULL COMMENT '押金金额',
+  payment_method TINYINT NOT NULL COMMENT '支付方式(0:现金,1:支付宝,2:微信支付,3:银联支付,4:银行卡,5:虚拟货币)',
+  start_time DATETIME NOT NULL COMMENT '租约开始时间',
+  end_time DATETIME NOT NULL COMMENT '租约到期时间',
+  emergency_contact VARCHAR(100) DEFAULT NULL COMMENT '紧急联系人',
+  remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
+  version INT COMMENT '版本号',
+  order_num INT(4) DEFAULT 0 COMMENT '排序序号',
+  deleted TINYINT(1) unsigned NOT NULL DEFAULT 0 COMMENT '删除标志(0未删除,1已删除)',
+  creator VARCHAR(64) DEFAULT '' COMMENT '创建者',
+  create_time DATETIME DEFAULT (SYSDATE()) COMMENT '创建时间',
+  updater VARCHAR(50) DEFAULT '' COMMENT '修改者',
+  update_time DATETIME COMMENT '修改时间'
+) engine = INNODB character set = utf8mb4 collate = utf8mb4_general_ci row_format = dynamic COMMENT '租户表';
+
+INSERT INTO sys_tenant(name,address,phone,email,
+rent_amount,deposit_amount,payment_method,
+start_time,end_time) VALUES 
+('GoBoot科技','地球','0769-00001','xxx@qq.com',100,0,0,NOW(),'2099-01-01');
 
 
 DROP TABLE IF EXISTS sys_role;
-
-CREATE TABLE
-    sys_role (
-                 id BIGINT (20) PRIMARY KEY AUTO_INCREMENT COMMENT '角色id',
-                 role_name VARCHAR(30) NOT NULL COMMENT '角色名称',
-                 role_key VARCHAR(100) NOT NULL COMMENT '角色权限字符串',
-                 data_scope TINYINT (1) unsigned NOT NULL DEFAULT 1 COMMENT '数据范围(1:全部数据权限,2:本部门数据权限,3:本部门及子机构数据权限,4:自定义数据权限)',
-                 `status` TINYINT (1) unsigned NOT NULL DEFAULT 0 COMMENT '状态(0启用,1禁用)',
-                 tenant_id BIGINT DEFAULT NULL COMMENT '租户id',
-                 version INT COMMENT '版本号',
-                 order_num INT (4) DEFAULT 0 COMMENT '排序序号',
-                 remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
-                 deleted TINYINT (1) unsigned NOT NULL DEFAULT 0 COMMENT '删除标志(0未删除,1已删除)',
-                 creator VARCHAR(64) DEFAULT '' COMMENT '创建者',
-                 create_time DATETIME DEFAULT NOW() COMMENT '创建时间',
-                 updater VARCHAR(50) DEFAULT '' COMMENT '修改者',
-                 update_time DATETIME COMMENT '修改时间'
+CREATE TABLE sys_role (
+  id BIGINT (20) PRIMARY KEY AUTO_INCREMENT COMMENT '角色id',
+  role_name VARCHAR(30) NOT NULL COMMENT '角色名称',
+  role_key VARCHAR(100) NOT NULL COMMENT '角色权限字符串',
+  data_scope TINYINT (1) unsigned NOT NULL DEFAULT 1 COMMENT '数据范围(1:全部数据权限,2:本部门数据权限,3:本部门及子机构数据权限,4:自定义数据权限)',
+  `status` TINYINT (1) unsigned NOT NULL DEFAULT 0 COMMENT '状态(0启用,1禁用)',
+  tenant_id BIGINT DEFAULT NULL COMMENT '租户id',
+  version INT COMMENT '版本号',
+  order_num INT (4) DEFAULT 0 COMMENT '排序序号',
+  remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
+  deleted TINYINT (1) unsigned NOT NULL DEFAULT 0 COMMENT '删除标志(0未删除,1已删除)',
+  creator VARCHAR(64) DEFAULT '' COMMENT '创建者',
+  create_time DATETIME DEFAULT NOW() COMMENT '创建时间',
+  updater VARCHAR(50) DEFAULT '' COMMENT '修改者',
+  update_time DATETIME COMMENT '修改时间'
 ) engine = INNODB character
 set
   = utf8mb4 collate = utf8mb4_general_ci row_format = dynamic COMMENT '角色表';
@@ -98,8 +105,7 @@ VALUES
 
 DROP TABLE IF EXISTS sys_post;
 
-CREATE TABLE
-    sys_post (
+CREATE TABLE sys_post (
                  id BIGINT (20) PRIMARY KEY AUTO_INCREMENT COMMENT '岗位id',
                  post_code VARCHAR(50) NOT NULL COMMENT '岗位编码',
                  post_name VARCHAR(50) NOT NULL COMMENT '岗位名称',

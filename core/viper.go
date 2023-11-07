@@ -3,11 +3,13 @@ package core
 import (
 	"flag"
 	"fmt"
+	"go-boot/core/internal"
+	"go-boot/global"
+	"os"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"go-boot/core/internal"
-	"os"
 )
 
 // Viper 初始化Viper。配置优先级: 命令行 > 环境变量 > 默认值
@@ -48,10 +50,11 @@ func Viper(path ...string) *viper.Viper {
 	// 设置配置文件类型
 	v.SetConfigType("yaml")
 	// 读取配置文件
-	err := v.ReadInConfig()
-	if err != nil {
+	if err := v.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
+	// 读取配置到全局对象
+	v.Unmarshal(&global.CONFIG)
 	// 监听配置文件变化
 	v.WatchConfig()
 	// 监听配置文件变化回调

@@ -1,0 +1,4 @@
+go-boot:2023/11/07 - 16:02:10.087	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:36	router register success
+go-boot:2023/11/07 - 16:02:10.126	[34minfo[0m	C:/project/go/workspace/go-boot/core/server.go:19	go-boot started successfully, port:	{"address": ":%!d(string=8888)"}
+go-boot:2023/11/07 - 16:03:05.135	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:36	router register success
+go-boot:2023/11/07 - 16:05:00.093	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:36	router register success

@@ -1,11 +1,12 @@
 package initialize
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-boot/global"
 	"go-boot/middleware"
 	"go-boot/router"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Routers() *gin.Engine {
@@ -29,7 +30,8 @@ func Routers() *gin.Engine {
 
 	systemRouter := router.RouterGroupApp.System
 	PrivateGroup := r.Group(routerPrefix)
-	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinRbac())
+	PrivateGroup.Use(middleware.JWTAuth()).
+		Use(middleware.CasbinRbac())
 	{
 		systemRouter.InitAuthorityRouter(PrivateGroup)
 	}
