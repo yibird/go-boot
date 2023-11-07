@@ -1,0 +1,26 @@
+# 忽略编译后的可执行文件
+*.exe
+*.out
+
+# 忽略生成的二进制文件目录
+bin/
+
+# 忽略 Go 语言依赖的 vendor 目录
+vendor/
+
+# 忽略临时文件
+.tmp/
+.temp/
+*.tmp
+*.swp
+
+# 忽略日志文件
+*.log
+
+# 忽略IDE和编辑器生成的文件和目录
+.idea/
+.vscode/
+*.sublime-*
+
+# 忽略缓存文件
+.cache/
