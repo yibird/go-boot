@@ -8,7 +8,7 @@
 | casbin      | 权限认证库                                             | v2.77.2 |
 | gorm        | orm 框架                                               | v1.25.5 |
 | viper       | 用于读取配置文件的工具库                               | v1.17.0 |
-| zap         | 高性能日志框架                                         |         |
+| zap         | 高性能日志框架                                         | v1.26.0 |
 | lumberjack  | 日志分割工具                                           | v2.2.1  |
 | swag        | go swagger 集成库                                      | v1.16.2 |
 | gin-swagger | gin swagger 集成库                                     | v1.6.0  |
