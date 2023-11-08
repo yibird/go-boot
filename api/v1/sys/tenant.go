@@ -1,6 +1,10 @@
 package sys
 
-import "github.com/gin-gonic/gin"
+import (
+	res "go-boot/model/common/response"
+
+	"github.com/gin-gonic/gin"
+)
 
 type TenantApi struct {
 }
@@ -22,5 +26,6 @@ func (s *TenantApi) UpTenant(c *gin.Context) {
 
 // 获取租户列表
 func (s *TenantApi) GetTenants(c *gin.Context) {
-
+	list, err := tenantService.GetAuthoritys()
+	res.HandleResWithData(err, list, c)
 }

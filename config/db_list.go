@@ -8,7 +8,7 @@ type DsnProvider interface {
 type GeneralDB struct {
 	// 服务器地址:端口
 	Path string `mapstructure:"path" json:"path" yaml:"path"`
-	//:端口
+	// 端口
 	Port string `mapstructure:"port" json:"port" yaml:"port"`
 	// 高级配置
 	Config string `mapstructure:"config" json:"config" yaml:"config"`
@@ -28,6 +28,8 @@ type GeneralDB struct {
 	MaxIdleConns int `mapstructure:"max-idle-conns" json:"max-idle-conns" yaml:"max-idle-conns"`
 	// 打开到数据库的最大连接数
 	MaxOpenConns int `mapstructure:"max-open-conns" json:"max-open-conns" yaml:"max-open-conns"`
+	// 连接最大生存时间(单位秒)
+	ConnMaxLifetime int `mapstructure:"conn-max-lifetime" json:"conn-max-lifetime" yaml:"conn-max-lifetime"`
 	// 是否开启Gorm全局日志
 	LogMode string `mapstructure:"log-mode" json:"log-mode" yaml:"log-mode"`
 	// 是否通过zap写入日志文件

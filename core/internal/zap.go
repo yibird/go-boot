@@ -3,10 +3,11 @@ package internal
 import (
 	"fmt"
 	"go-boot/global"
+	"time"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"time"
 )
 
 type _zap struct{}

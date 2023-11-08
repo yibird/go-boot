@@ -7,16 +7,32 @@ import (
 )
 
 const (
-	SUCCESS = http.StatusOK
-	ERROR   = http.StatusInternalServerError
-	FAIL    = http.StatusGone
+	SUCCESS          = http.StatusOK
+	BAD_REQUEST      = http.StatusBadRequest
+	UNAUTHORIZED     = http.StatusUnauthorized
+	FORBIDDEN        = http.StatusForbidden
+	NOTFOUND         = http.StatusNotFound
+	TOO_MANY_REQUEST = http.StatusTooManyRequests
+	ERROR            = http.StatusInternalServerError
 )
 
-const (
-	SuccessText = "响应成功"
-	ErrorText   = "响应异常"
-	FailText    = "响应失败"
-)
+var StatusCodeMap = map[int]string{
+	SUCCESS:          "OK",
+	BAD_REQUEST:      "Bad Request",
+	UNAUTHORIZED:     "Unauthorized",
+	FORBIDDEN:        "Forbidden",
+	NOTFOUND:         "Not Found",
+	TOO_MANY_REQUEST: "Too Many Requests",
+	ERROR:            "Internal Server Error",
+}
+
+func getStatus(code int) (int, string) {
+	message, exists := StatusCodeMap[code]
+	if exists {
+		return code, message
+	}
+	return code, ""
+}
 
 // ApiResponse 统一响应结构体
 type ApiResponse struct {
@@ -33,11 +49,22 @@ func Result(code int, data interface{}, msg string, c *gin.Context) {
 	})
 }
 
+func ResultWithCode(statusCode int, c *gin.Context) {
+	code, message := getStatus(statusCode)
+	c.JSON(http.StatusOK, ApiResponse{
+		Code: code,
+		Data: nil,
+		Msg:  message,
+	})
+}
+
 func OK(c *gin.Context) {
-	Result(SUCCESS, map[string]interface{}{}, SuccessText, c)
+	code, message := getStatus(SUCCESS)
+	Result(code, nil, message, c)
 }
 func OkWithData(data interface{}, c *gin.Context) {
-	Result(SUCCESS, data, SuccessText, c)
+	code, message := getStatus(SUCCESS)
+	Result(code, data, message, c)
 }
 func OkWithMessage(message string, c *gin.Context) {
 	Result(SUCCESS, map[string]interface{}{}, message, c)
@@ -48,15 +75,34 @@ func OKWithRecord(data interface{}, message string, c *gin.Context) {
 
 // ----------------------------------
 
-func Fail(c *gin.Context) {
-	Result(FAIL, map[string]interface{}{}, FailText, c)
+func Error(c *gin.Context) {
+	code, message := getStatus(ERROR)
+	Result(code, nil, message, c)
 }
-func FailWithData(data interface{}, c *gin.Context) {
-	Result(FAIL, data, FailText, c)
+func ErrorWithData(data interface{}, c *gin.Context) {
+	code, message := getStatus(ERROR)
+	Result(code, data, message, c)
 }
-func FailWithMessage(message string, c *gin.Context) {
-	Result(FAIL, map[string]interface{}{}, message, c)
+func ErrorWithMessage(message string, c *gin.Context) {
+	Result(ERROR, map[string]interface{}{}, message, c)
 }
-func FailWithRecord(data interface{}, message string, c *gin.Context) {
-	Result(FAIL, data, message, c)
+func ErrorWithRecord(data interface{}, message string, c *gin.Context) {
+	Result(ERROR, data, message, c)
+}
+
+// ----------------------------------
+func HandleResWithData(err error, data interface{}, c *gin.Context) {
+	if err == nil {
+		OkWithData(data, c)
+		return
+	}
+	Error(c)
+}
+
+func HandleResWithMessage(err error, message string, c *gin.Context) {
+	if err == nil {
+		OkWithMessage(message, c)
+		return
+	}
+	Error(c)
 }

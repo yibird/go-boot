@@ -9,6 +9,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func RegisterPublicGroup(r *gin.Engine, routerPrefix string) {
+	publicGroup := r.Group(routerPrefix)
+	{
+		// 健康监测
+		publicGroup.GET("/health", func(c *gin.Context) {
+			c.JSON(http.StatusOK, "ok")
+		})
+	}
+}
+
+func RegisterPrivateGroup(r *gin.Engine, routerPrefix string) {
+	privateGroup := r.Group(routerPrefix)
+
+	sysRouter := router.RouterGroupApp.System
+
+	privateGroup.Use(middleware.RateLimit(global.CONFIG.System.RateLimit)).
+		Use(middleware.JWTAuth()).
+		Use(middleware.CasbinRbac())
+	{
+		sysRouter.InitSysRouter(privateGroup)
+	}
+
+}
+
 func Routers() *gin.Engine {
 	r := gin.Default()
 	env := global.CONFIG.System.Env
@@ -17,24 +41,12 @@ func Routers() *gin.Engine {
 	if env == "dev" || env == "test" {
 		r.Use(middleware.Cors())
 	}
-
+	// 获取路由前缀
 	routerPrefix := global.CONFIG.System.RouterPrefix
-
-	PublicGroup := r.Group(routerPrefix)
-	{
-		// 健康监测
-		PublicGroup.GET("/health", func(c *gin.Context) {
-			c.JSON(http.StatusOK, "ok")
-		})
-	}
-
-	systemRouter := router.RouterGroupApp.System
-	PrivateGroup := r.Group(routerPrefix)
-	PrivateGroup.Use(middleware.JWTAuth()).
-		Use(middleware.CasbinRbac())
-	{
-		systemRouter.InitAuthorityRouter(PrivateGroup)
-	}
+	// 注册公共路由组
+	RegisterPublicGroup(r, routerPrefix)
+	// 注册私有路由组
+	RegisterPrivateGroup(r, routerPrefix)
 	global.LOGGER.Info("router register success")
 	return r
 }

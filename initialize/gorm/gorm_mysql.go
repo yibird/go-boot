@@ -1,10 +1,12 @@
 package gorm
 
 import (
-	_ "github.com/go-sql-driver/mysql"
 	"go-boot/config"
 	"go-boot/global"
 	"go-boot/initialize/internal"
+	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -29,10 +31,12 @@ func GormMysql() *gorm.DB {
 	} else {
 		db.InstanceSet("gorm:table_options", "ENGINE="+m.Engine)
 		sqlDB, _ := db.DB()
-		// 设置最大空闲连接数
+		// 最大空闲连接数
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
-		// 设置最大连接数
+		// 最大连接数
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
+		// 连接最大生存时间
+		sqlDB.SetConnMaxLifetime(time.Duration(m.ConnMaxLifetime) * time.Second)
 		return db
 	}
 }

@@ -1,18 +1,18 @@
 package global
 
 import (
-	"time"
+	"go-boot/utils/time"
 )
 
 // 通用模型
 type BaseModel struct {
-	ID         uint      `gorm:"primary"` // 主键ID
-	Remark     string    // 备注
-	version    int       // 版本号
-	OrderNum   int       `gorm:"order_num"` // 排序序号
-	Deleted    int8      // 删除标识 0未删除,1已删除
-	Creator    string    // 创建者
-	CreateTime time.Time `gorm:"create_time"` // 创建时间
-	Updater    string    // 修改者
-	UpdateTime time.Time `gorm:"update_time"` // 更新时间
+	ID         uint            `gorm:"primary" json:"id"`             // 主键ID
+	Remark     string          `json:"remark"`                        // 备注
+	Version    int             `json:"version"`                       // 版本号
+	OrderNum   int             `gorm:"order_num" json:"orderNum"`     // 排序序号
+	Deleted    int8            `gorm:"deleted" json:"deleted"`        // 删除标识 0未删除,1已删除
+	Creator    string          `gorm:"creator" json:"creator"`        // 创建者
+	CreateTime *time.LocalTime `gorm:"create_time" json:"createTime"` // 创建时间
+	Updater    string          `gorm:"updater" json:"updater"`        // 修改者
+	UpdateTime *time.LocalTime `gorm:"update_time" json:"updateTime"` // 更新时间
 }
