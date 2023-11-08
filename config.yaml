@@ -91,9 +91,13 @@ system:
   router-prefix: ""
   # 使用数据库类型,支持 mysql、pgsql、oracle、sqlite、mongodb
   db-type: mysql
-  # 限流配置
+  # API限流配置
   rate-limit:
     # 每秒允许通过的请求速率
     limit: 500
     # 令牌桶的容量
     burst: 1
+  # API响应加密配置
+  response-encrypt:
+    enabled: false
+    mode:

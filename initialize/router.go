@@ -47,6 +47,6 @@ func Routers() *gin.Engine {
 	RegisterPublicGroup(r, routerPrefix)
 	// 注册私有路由组
 	RegisterPrivateGroup(r, routerPrefix)
-	global.LOGGER.Info("router register success")
+	global.LOGGER.Info("router register success🎉")
 	return r
 }

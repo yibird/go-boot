@@ -19,3 +19,4 @@ go-boot:2023/11/08 - 14:57:36.222	[34minfo[0m	C:/project/go/workspace/go-boot/
 go-boot:2023/11/08 - 15:23:14.606	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:39	router register success
 go-boot:2023/11/08 - 15:25:18.128	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:39	router register success
 go-boot:2023/11/08 - 17:08:41.418	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:41	router register success
+go-boot:2023/11/08 - 17:18:03.626	[34minfo[0m	C:/project/go/workspace/go-boot/initialize/router.go:50	router register success
