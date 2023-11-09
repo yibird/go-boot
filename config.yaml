@@ -81,6 +81,21 @@ cors:
       allow-methods: POST, GET
       expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
 
+# swagger文档配置
+swagger:
+  # 基础路径
+  base-path: /api/v1
+  # 文档标题
+  title: go-boot Docs
+  # 文档详情
+  description: go-boot v0.0.1 Docs
+  # 文档Host
+  host: 127.0.0.1
+  # 详情实例名称
+  info-instance-name: go-boot
+  # 版本
+  version: v0.0.1
+
 # 系统配置
 system:
   # 系统环境
@@ -88,7 +103,7 @@ system:
   # 启动地址
   addr: 8888
   # 路由全局前缀
-  router-prefix: ""
+  router-prefix: "api/v1"
   # 使用数据库类型,支持 mysql、pgsql、oracle、sqlite、mongodb
   db-type: mysql
   # API限流配置

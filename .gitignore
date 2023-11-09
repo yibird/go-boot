@@ -1,4 +1,6 @@
 .sum
+# 忽略swagger文档目录
+docs/
 # 忽略编译后的可执行文件
 *.exe
 *.out

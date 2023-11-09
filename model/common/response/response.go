@@ -34,15 +34,15 @@ func getStatus(code int) (int, string) {
 	return code, ""
 }
 
-// ApiResponse 统一响应结构体
-type ApiResponse struct {
+// Response 统一响应结构体
+type Response struct {
 	Code int         `json:"code"`
 	Data interface{} `json:"data"`
 	Msg  string      `json:"msg"`
 }
 
 func Result(code int, data interface{}, msg string, c *gin.Context) {
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, Response{
 		Code: code,
 		Data: data,
 		Msg:  msg,
@@ -51,7 +51,7 @@ func Result(code int, data interface{}, msg string, c *gin.Context) {
 
 func ResultWithCode(statusCode int, c *gin.Context) {
 	code, message := getStatus(statusCode)
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, Response{
 		Code: code,
 		Data: nil,
 		Msg:  message,
@@ -91,7 +91,7 @@ func ErrorWithRecord(data interface{}, message string, c *gin.Context) {
 }
 
 // ----------------------------------
-func HandleResWithData(err error, data interface{}, c *gin.Context) {
+func ApiResultWithData(c *gin.Context, err error, data interface{}) {
 	if err == nil {
 		OkWithData(data, c)
 		return
@@ -99,7 +99,7 @@ func HandleResWithData(err error, data interface{}, c *gin.Context) {
 	Error(c)
 }
 
-func HandleResWithMessage(err error, message string, c *gin.Context) {
+func ApiResultWithMsg(c *gin.Context, err error, message string) {
 	if err == nil {
 		OkWithMessage(message, c)
 		return
