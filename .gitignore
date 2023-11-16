@@ -20,6 +20,7 @@ vendor/
 
 # 忽略日志文件
 log/
+log/.log
 *.log
 
 # 忽略IDE和编辑器生成的文件和目录
