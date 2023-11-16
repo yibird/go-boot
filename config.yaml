@@ -38,7 +38,7 @@ zap:
   # 日志输出目录
   director: log
   # 日志文件前缀
-  file-prefix: app-
+  file-prefix: app
   # 是否显示文件的行号
   show-line: true
   # 日志编码级别,默认情况下使用 zapcore.LowercaseLevelEncoder 将日志级别编码为小写字符串

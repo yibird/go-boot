@@ -12,6 +12,7 @@ func (s *TenantRouter) InitTenantRouter(Router *gin.RouterGroup) {
 	router := Router.Group("tenant")
 	tenantApi := v1.ApiGroupApp.SysApiGroup.TenantApi
 	{
-		router.GET("getTenants", tenantApi.GetTenants)
+		router.POST("save", tenantApi.Save)
+		router.GET("getList", tenantApi.GetList)
 	}
 }
