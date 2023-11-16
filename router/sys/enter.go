@@ -8,6 +8,7 @@ type RouterGroup struct {
 }
 
 func (r *RouterGroup) InitSysRouter(Router *gin.RouterGroup) {
-	r.InitTenantRouter(Router)
 	r.InitAuthorityRouter(Router)
+	r.InitTenantRouter(Router)
+	r.InitRoleRouter(Router)
 }

@@ -90,7 +90,7 @@ func ErrorWithRecord(data interface{}, message string, c *gin.Context) {
 	Result(ERROR, data, message, c)
 }
 
-// ----------------------------------
+// ApiResultWithData ----------------------------------
 func ApiResultWithData(c *gin.Context, err error, data interface{}) {
 	if err == nil {
 		OkWithData(data, c)
