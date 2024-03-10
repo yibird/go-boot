@@ -19,7 +19,7 @@ CREATE TABLE sys_tenant (
                             phone VARCHAR ( 20 ) COMMENT '电话',
                             email VARCHAR ( 100 ) COMMENT '邮箱',
                             emergency_contact VARCHAR ( 100 ) DEFAULT NULL COMMENT '紧急联系人',
-                            `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                            `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                             remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                             version INT COMMENT '版本号',
                             sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -43,7 +43,7 @@ CREATE TABLE sys_role (
                           role_name VARCHAR ( 30 ) NOT NULL COMMENT '角色名称',
                           role_key VARCHAR ( 100 ) NOT NULL COMMENT '角色权限字符串',
                           data_scope TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT 1 COMMENT '数据范围(0:全部数据权限,1:本部门数据权限,2:本部门及子机构数据权限,3:自定义数据权限)',
-                          `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                          `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                           remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                           version INT COMMENT '版本号',
                           sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -57,7 +57,7 @@ CREATE TABLE sys_role (
                           UNIQUE INDEX `uq_role_code` ( `role_code` ASC ) USING BTREE
 ) ENGINE = INNODB CHARACTER
     SET = utf8mb4 COLLATE = utf8mb4_general_ci row_format = dynamic COMMENT '角色表';
-INSERT INTO sys_role ( role_code,role_name, role_key, data_scope, `status`,tenant_id)
+INSERT INTO sys_role ( role_code,role_name, role_key, data_scope, `data_status`,tenant_id)
 VALUES
     ( 'r00001','管理员', 'admin', 0, 1,1 ),
     ( 'r00002', '董事长', 'boss', 0, 1,1),
@@ -83,7 +83,7 @@ CREATE TABLE sys_org (
                          phone VARCHAR ( 30 ) DEFAULT NULL COMMENT '机构联系电话',
                          email VARCHAR ( 50 ) DEFAULT NULL COMMENT '机构联系邮箱',
                          leader VARCHAR ( 30 ) DEFAULT NULL COMMENT '机构负责人(多个元素用,号分割)',
-                         `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                         `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                          remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                          version INT COMMENT '版本号',
                          sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -122,7 +122,7 @@ CREATE TABLE sys_post (
                           post_name VARCHAR ( 50 ) NOT NULL COMMENT '岗位名称',
                           post_type TINYINT ( 1 ) NOT NULL DEFAULT 0 COMMENT '岗位类型(0全职岗位、1试用岗位、2实习岗位、3临时岗位)',
                           post_level TINYINT ( 1 ) NOT NULL COMMENT '岗位等级(0实习、1初级、2中级、3高级、4资深、5专家、6首席官)',
-                          `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                          `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                           remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                           version INT COMMENT '版本号',
                           sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -157,7 +157,7 @@ DROP TABLE
     EXISTS sys_menu;
 CREATE TABLE sys_menu (
                           id BIGINT ( 20 ) PRIMARY KEY AUTO_INCREMENT COMMENT '菜单id',
-                          p_id BIGINT ( 20 ) DEFAULT 0 COMMENT '菜单父id,0表示无上级菜单',
+                          parent_id BIGINT ( 20 ) DEFAULT 0 COMMENT '菜单父id,0表示无上级菜单',
                           menu_code VARCHAR ( 30 ) NOT NULL COMMENT '菜单编码',
                           menu_name VARCHAR ( 30 ) NOT NULL COMMENT '菜单名称',
                           menu_type TINYINT ( 1 ) UNSIGNED NOT NULL COMMENT '菜单类型(0:目录,1:菜单,2:按钮)',
@@ -169,7 +169,7 @@ CREATE TABLE sys_menu (
                           no_permission_action TINYINT ( 1 ) UNSIGNED NOT NULL DEFAULT 0 COMMENT '无权限行为(0:隐藏,1:禁用,2:消息提示)',
                           closable BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '菜单是否可关闭(0:否,1:是)',
                           isNew BIT ( 1 ) NOT NULL DEFAULT 0 COMMENT '是否是新菜单(0:否,1:是)',
-                          `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                          `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                           remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                           version INT COMMENT '版本号',
                           sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -182,7 +182,7 @@ CREATE TABLE sys_menu (
                           FOREIGN KEY ( tenant_id ) REFERENCES sys_tenant ( id )
 ) ENGINE = INNODB CHARACTER
     SET = utf8mb4 COLLATE = utf8mb4_general_ci row_format = dynamic COMMENT '系统菜单表';
-INSERT INTO sys_menu ( p_id, menu_code, menu_name, menu_type, menu_path, menu_icon, level_path, permission_key, no_permission_action, closable, isNew, tenant_id )
+INSERT INTO sys_menu ( parent_id, menu_code, menu_name, menu_type, menu_path, menu_icon, level_path, permission_key, no_permission_action, closable, isNew, tenant_id )
 VALUES
     ( 0, 'm00001', '系统设置', 0, '', '', '', '', 0, 0, 0, 1 ),
     ( 1, 'm00002', '用户管理', 1, '/user', '', '1', '', 0, 0, 0, 1 ),
@@ -210,7 +210,7 @@ CREATE TABLE sys_user (
                           address VARCHAR ( 100 ) DEFAULT '' COMMENT '地址',
                           avatar VARCHAR ( 100 ) DEFAULT '' COMMENT '头像',
                           birthday DATETIME COMMENT '生日',
-                          `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                          `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                           remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                           version INT COMMENT '版本号',
                           sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -272,7 +272,7 @@ CREATE TABLE sys_dict_type (
                                dict_name VARCHAR ( 100 ) NOT NULL COMMENT '字典名称',
                                dict_source TINYINT(1) NOT NULL  DEFAULT 0 COMMENT '数据来源(0字典数据,1动态SQL)',
                                dict_sql    varchar(500) COMMENT '动态SQL',
-                               `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                               `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                                remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                                version INT COMMENT '版本号',
                                sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -299,7 +299,7 @@ CREATE TABLE sys_dict_data (
                                dict_type BIGINT NOT NULL COMMENT '字典类型id',
                                dict_label VARCHAR ( 100 ) NOT NULL COMMENT '字典标签',
                                dict_value VARCHAR ( 100 ) DEFAULT '' COMMENT '字典值',
-                               `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                               `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                                remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                                version INT COMMENT '版本号',
                                sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -333,7 +333,7 @@ CREATE TABLE sys_log_login (
                                login_status BIT(1) DEFAULT 1 COMMENT '登录/登出状态(0失败,1成功)',
                                online_status TINYINT(1) DEFAULT 1 COMMENT '在线状态(0:离线,1在线)',
                                last_login_time DATETIME COMMENT '最后一次登录时间',
-                               `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                               `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                                remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                                version INT COMMENT '版本号',
                                sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -357,7 +357,7 @@ CREATE TABLE sys_log_operate (
                                  user_id BIGINT COMMENT '操作用户id',
                                  operate_name VARCHAR(100) COMMENT '操作名称',
                                  operate_type tinyint(1) UNSIGNED NOT NULL COMMENT '操作类型(0查询、1添加、2删除、3修改、4调用)',
-                                 `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '日志状态(0失败,1成功)',
+                                 `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '日志状态(0失败,1成功)',
                                  module VARCHAR(50) COMMENT '操作模块',
                                  req_url varchar(200) DEFAULT NULL COMMENT '请求URI',
                                  req_params text COMMENT '请求参数',
@@ -389,7 +389,7 @@ CREATE TABLE sys_message (
                              content TEXT ( 1000 ) COMMENT '内容',
                              cancel_time DATETIME COMMENT '撤销时间',
                              message_status TINYINT ( 1 ) NOT NULL COMMENT '消息状态(0:草稿,1:已发送,2:已接收,3:已查阅)',
-                             `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                             `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                              remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                              version INT COMMENT '版本号',
                              sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -411,7 +411,7 @@ CREATE TABLE sys_params (
                             param_type TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '参数类型(0系统参数,1自定义参数)',
                             param_key VARCHAR(50) NOT NULL COMMENT '参数key',
                             param_value VARCHAR(50) NOT NULL COMMENT '参数value',
-                            `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                            `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                             remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                             version INT COMMENT '版本号',
                             sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -432,7 +432,7 @@ CREATE TABLE sys_job_group (
                                id BIGINT ( 20 ) PRIMARY KEY AUTO_INCREMENT COMMENT '任务组id',
                                tenant_id BIGINT NOT NULL COMMENT '租户id',
                                group_name VARCHAR(50) NOT NULL COMMENT '任务组名称',
-                               `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                               `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                                remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                                version INT COMMENT '版本号',
                                sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -459,7 +459,7 @@ CREATE TABLE sys_job (
                          cron_expression VARCHAR(200) NOT NULL COMMENT 'cron表达式',
                          concurrent_execute BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '是否并发执行(0是,1否)',
                          immediate BIT ( 1 ) NOT NULL DEFAULT 0 COMMENT '是否立即执行(0是,1否)',
-                         `status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
+                         `data_status` BIT ( 1 ) NOT NULL DEFAULT 1 COMMENT '数据状态(0禁用,1启用)',
                          remark VARCHAR ( 500 ) DEFAULT NULL COMMENT '备注',
                          version INT COMMENT '版本号',
                          sort INT ( 4 ) DEFAULT 0 COMMENT '排序序号',
@@ -477,7 +477,7 @@ DROP TABLE IF EXISTS sys_job_log;
 CREATE TABLE sys_job_log (
                              id BIGINT ( 20 ) PRIMARY KEY AUTO_INCREMENT COMMENT '任务id',
                              job_id        BIGINT(20) NOT NULL COMMENT '任务id',
-                             `status`        TINYINT UNSIGNED NOT NULL COMMENT '任务状态(0失败,1成功)',
+                             `data_status`        TINYINT UNSIGNED NOT NULL COMMENT '任务状态(0失败,1成功)',
                              timer INT NOT NULL COMMENT '执行耗时(单位毫秒)',
                              exception TEXT COMMENT '异常信息',
                              create_time DATETIME DEFAULT NOW() COMMENT '创建时间',

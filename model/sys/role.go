@@ -19,3 +19,13 @@ type Role struct {
 func (Role) TableName() string {
 	return "sys_role"
 }
+
+type RoleDto struct {
+}
+type RoleQuery struct {
+	global.BaseQueryModel
+	// 角色编码
+	RoleCode string `gorm:"role_code" json:"roleCode"`
+	// 角色名称
+	RoleName string `gorm:"role_name" json:"roleName"`
+}

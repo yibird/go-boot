@@ -27,8 +27,8 @@ func (page *PageResult[T]) Paginate(db *gorm.DB) (e error) {
 // CalcPaging 计算分页
 func CalcPaging[T any](page *PageResult[T]) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if page.Current < 0 {
-			page.Current = 0
+		if page.Current < 1 {
+			page.Current = 1
 		}
 		if page.PageSize <= 0 {
 			page.PageSize = 10

@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// 合并两个结构体的同名属性值
+// Merge 合并两个结构体的同名属性值
 func Merge(target interface{}, source interface{}) {
 	targetType := reflect.TypeOf(target)
 	sourceType := reflect.TypeOf(source)

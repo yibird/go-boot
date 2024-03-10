@@ -11,4 +11,5 @@ func main() {
 	global.LOGGER = core.Zap()
 	global.DB = initialize.Gorm()
 	core.RunServer()
+
 }

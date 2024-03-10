@@ -3,7 +3,7 @@ package sys
 import (
 	"github.com/gin-gonic/gin"
 	res "go-boot/model/common/response"
-	"go-boot/model/sys/query"
+	"go-boot/model/sys"
 )
 
 type RoleApi struct {
@@ -21,7 +21,7 @@ func (s *RoleApi) Save(c *gin.Context) {
 // @Success   200   {object} response.Response{data=object,msg=string}  "获取角色列表"
 // @Router    /role/getList [get]
 func (s *RoleApi) GetList(c *gin.Context) {
-	var roleQuery query.RoleQuery
+	var roleQuery sys.RoleQuery
 	if err := c.ShouldBindQuery(&roleQuery); err != nil {
 		return
 	}

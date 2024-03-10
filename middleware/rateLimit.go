@@ -1,17 +1,13 @@
 package middleware
 
 import (
+	"github.com/gin-gonic/gin"
 	"go-boot/config"
 	"go-boot/model/common/response"
-
-	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
 )
 
-// 限流中间件,基于令牌桶算法实现限流策略
-// Parameters:
-//   - limit: 每秒允许通过的请求速率。
-//   - burst: 令牌桶的容量。
+// RateLimit 限流中间件
 func RateLimit(ratelimit config.RateLimit) gin.HandlerFunc {
 	limiter := rate.NewLimiter(rate.Limit(ratelimit.Limit), ratelimit.Burst)
 	return func(c *gin.Context) {

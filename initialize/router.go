@@ -22,7 +22,7 @@ func RegisterSwaggerRouter(r *gin.Engine) {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 
-// 注册公开路由组
+// RegisterPublicGroup 注册公开路由组
 func RegisterPublicGroup(r *gin.Engine, routerPrefix string) {
 	publicGroup := r.Group(routerPrefix)
 	{
@@ -34,7 +34,7 @@ func RegisterPublicGroup(r *gin.Engine, routerPrefix string) {
 	}
 }
 
-// 注册私有路由组
+// RegisterPrivateGroup 注册私有路由组
 func RegisterPrivateGroup(r *gin.Engine, routerPrefix string) {
 	privateGroup := r.Group(routerPrefix)
 
@@ -46,7 +46,6 @@ func RegisterPrivateGroup(r *gin.Engine, routerPrefix string) {
 	{
 		sysRouter.InitSysRouter(privateGroup)
 	}
-
 }
 
 func Routers() *gin.Engine {
