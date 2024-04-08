@@ -2,25 +2,27 @@ package core
 
 import (
 	"fmt"
-	"go-boot/core/internal"
-	"go-boot/global"
-
 	"github.com/duke-git/lancet/v2/fileutil"
+	"go-boot/config"
+	"go-boot/core/internal"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-// Zap 初始化Zap,获取zap.Logger实例
-func Zap() (logger *zap.Logger) {
-	director := global.CONFIG.Zap.Director
+// NewLogger 初始化Zap.Logger
+func NewLogger(config *config.Config) (logger *zap.Logger) {
+	// 获取日志目录
+	director := config.Zap.Director
 	if exist := fileutil.IsExist(director); !exist {
 		fmt.Printf("create %v directory\n", director)
-		fileutil.CreateDir(director)
+		if err := fileutil.CreateDir(director); err != nil {
+			return nil
+		}
 	}
-	cores := internal.Zap.GetZapCores()
+	cores := internal.Zap.GetZapCores(config)
 	logger = zap.New(zapcore.NewTee(cores...))
 
-	if global.CONFIG.Zap.ShowLine {
+	if config.Zap.ShowLine {
 		logger = logger.WithOptions(zap.AddCaller())
 	}
 	return logger

@@ -1,3 +1,7 @@
+# application
+application:
+  name: go-boot
+  version: v0.0.1
 # Mysql配置
 mysql:
   # 连接host
@@ -23,7 +27,7 @@ mysql:
 redis:
   db: 0
   addr: 127.0.0.1:6379
-  password: ""
+  password:
 
 # Zap配置
 zap:

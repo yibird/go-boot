@@ -33,16 +33,16 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/res.Response"
                                 },
                                 {
-                                    "type": "object",
+                                    "_type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "object"
+                                            "_type": "object"
                                         },
                                         "msg": {
-                                            "type": "string"
+                                            "_type": "string"
                                         }
                                     }
                                 }
@@ -54,15 +54,15 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "response.Response": {
-            "type": "object",
+        "res.Response": {
+            "_type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "_type": "integer"
                 },
                 "data": {},
                 "msg": {
-                    "type": "string"
+                    "_type": "string"
                 }
             }
         }

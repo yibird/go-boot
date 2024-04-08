@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"go-boot/config"
-	"go-boot/model/common/response"
+	"go-boot/core/model/res"
 	"golang.org/x/time/rate"
 )
 
@@ -15,7 +15,7 @@ func RateLimit(ratelimit config.RateLimit) gin.HandlerFunc {
 			c.Next()
 		} else {
 			c.Abort()
-			response.ResultWithCode(response.TOO_MANY_REQUEST, c)
+			res.ResultWithCode(res.TOO_MANY_REQUEST, c)
 		}
 	}
 }

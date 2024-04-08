@@ -2,21 +2,23 @@ package internal
 
 import (
 	"fmt"
-	"go-boot/global"
-	"time"
-
+	"go-boot/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"os"
+	"time"
 )
 
 type _zap struct{}
 
 var Zap = new(_zap)
 
+var zapConfig config.Zap
+
 // CustomTimeEncoder 自定义日志输出时间格式
 func (z *_zap) CustomTimeEncoder(t time.Time, encoder zapcore.PrimitiveArrayEncoder) {
-	encoder.AppendString(global.CONFIG.Zap.Prefix + t.Format("2006/01/02 - 15:04:05.000"))
+	encoder.AppendString(zapConfig.Prefix + t.Format("2006/01/02 - 15:04:05.000"))
 }
 
 // GetEncoderConfig 获取zap编码器配置文件,返回 zapcore.EncoderConfig 实例
@@ -27,9 +29,9 @@ func (z *_zap) GetEncoderConfig() zapcore.EncoderConfig {
 		TimeKey:        "time",
 		NameKey:        "logger",
 		CallerKey:      "caller",
-		StacktraceKey:  global.CONFIG.Zap.StacktraceKey,
+		StacktraceKey:  zapConfig.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    global.CONFIG.Zap.ZapEncodeLevel(),
+		EncodeLevel:    zapConfig.ZapEncodeLevel(),
 		EncodeTime:     z.CustomTimeEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
@@ -39,8 +41,7 @@ func (z *_zap) GetEncoderConfig() zapcore.EncoderConfig {
 // GetEncoder 获取 zapcore.Encoder
 func (z *_zap) GetEncoder() zapcore.Encoder {
 	// 获取配置文件中Zap的格式化方式
-	format := global.CONFIG.Zap.Format
-
+	format := zapConfig.Format
 	formatMap := map[string]zapcore.Encoder{
 		"json":    zapcore.NewJSONEncoder(z.GetEncoderConfig()),
 		"console": zapcore.NewConsoleEncoder(z.GetEncoderConfig()),
@@ -91,31 +92,35 @@ func (z *_zap) GetLevelPriority(level zapcore.Level) zap.LevelEnablerFunc {
 }
 
 func getWriter(level string) zapcore.WriteSyncer {
-	director := global.CONFIG.Zap.Director
-	filePrefix := global.CONFIG.Zap.FilePrefix
+	director := zapConfig.Director
+	filePrefix := zapConfig.FilePrefix
 	filename := fmt.Sprintf("%s/%s-%s.log", director, filePrefix, level)
 
 	// 使用lumberjack进行日志分割
 	lumberjackLogger := &lumberjack.Logger{
 		Filename:   filename,
-		MaxSize:    global.CONFIG.Zap.MaxSize,
-		MaxBackups: global.CONFIG.Zap.MaxBackups,
-		MaxAge:     global.CONFIG.Zap.MaxAge,
-		Compress:   global.CONFIG.Zap.Compress,
+		MaxSize:    zapConfig.MaxSize,
+		MaxBackups: zapConfig.MaxBackups,
+		MaxAge:     zapConfig.MaxAge,
+		Compress:   zapConfig.Compress,
 	}
-	return zapcore.AddSync(lumberjackLogger)
+	// 创建控制台同步器
+	consoleSyncer := zapcore.Lock(os.Stdout)
+	// 创建日志文件同步器
+	fileSyncer := zapcore.AddSync(lumberjackLogger)
+	return zapcore.NewMultiWriteSyncer(consoleSyncer, fileSyncer)
 }
 
 // GetEncoderCore 获取Encoder的 zapcore.Core
-// Author [SliverHorn](https://github.com/SliverHorn)
-func (z *_zap) GetEncoderCore(l zapcore.Level, level zap.LevelEnablerFunc) zapcore.Core {
-	return zapcore.NewCore(z.GetEncoder(), getWriter(l.String()), level)
+func (z *_zap) GetEncoderCore(level zapcore.Level, levelEnablerFunc zap.LevelEnablerFunc) zapcore.Core {
+	return zapcore.NewCore(z.GetEncoder(), getWriter(level.String()), levelEnablerFunc)
 }
 
 // GetZapCores 根据配置文件的Level获取 []zapcore.Core
-func (z *_zap) GetZapCores() []zapcore.Core {
+func (z *_zap) GetZapCores(config *config.Config) []zapcore.Core {
 	cores := make([]zapcore.Core, 0, 7)
-	for level := global.CONFIG.Zap.ZapLevel(); level <= zapcore.FatalLevel; level++ {
+	zapConfig = config.Zap
+	for level := config.Zap.ZapLevel(); level <= zapcore.FatalLevel; level++ {
 		cores = append(cores, z.GetEncoderCore(level, z.GetLevelPriority(level)))
 	}
 	return cores

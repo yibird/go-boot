@@ -38,7 +38,7 @@ type GeneralDB struct {
 
 type SpecializedDB struct {
 	Disable   bool   `mapstructure:"disable" json:"disable" yaml:"disable"`
-	Type      string `mapstructure:"type" json:"type" yaml:"type"`
+	Type      string `mapstructure:"_type" json:"_type" yaml:"_type"`
 	AliasName string `mapstructure:"alias-name" json:"alias-name" yaml:"alias-name"`
 	GeneralDB `yaml:",inline" mapstructure:",squash"`
 }

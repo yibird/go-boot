@@ -1,65 +1,65 @@
 package initialize
 
 import (
-	docs "go-boot/docs"
-	"go-boot/global"
-	"go-boot/middleware"
-	"go-boot/router"
-	"go-boot/utils/structs"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go-boot/config"
+	"go-boot/middleware"
+	"go-boot/module/sys"
+	"go-boot/utils/structs"
+	"go.uber.org/zap"
+	"net/http"
 )
 
-func RegisterSwaggerRouter(r *gin.Engine) {
-	env := global.CONFIG.System.Env
+import (
+	swaggerfiles "github.com/swaggo/files"
+	docs "go-boot/docs"
+)
+
+func RegisterSwaggerRouter(r *gin.Engine, config *config.Config) {
+	env := config.System.Env
 	if env == "pro" {
 		return
 	}
-	structs.Merge(docs.SwaggerInfo, global.CONFIG.Swagger)
+	structs.Merge(docs.SwaggerInfo, config.Swagger)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 
-// RegisterPublicGroup 注册公开路由组
-func RegisterPublicGroup(r *gin.Engine, routerPrefix string) {
-	publicGroup := r.Group(routerPrefix)
+type EngineWrapper struct {
+	Engine *gin.Engine
+}
+
+// NewEngine 创建*gin.Engine
+func NewEngine() (*EngineWrapper, error) {
+	r := gin.Default()
+	return &EngineWrapper{r}, nil
+}
+
+func RegisterRoutes(ew *EngineWrapper, config *config.Config,
+	logger *zap.Logger, sysRouter *sys.SysRouter) {
+	engine := ew.Engine
+	env := config.System.Env
+	prefix := config.System.RouterPrefix
+	// 如果是开发或测试环境则添加跨域中间件
+	if env == "dev" || env == "test" {
+		engine.Use(middleware.Cors())
+	}
+
+	publicGroup := engine.Group(config.System.RouterPrefix)
 	{
 		// 健康监测
 		publicGroup.GET("/health", func(c *gin.Context) {
 			c.JSON(http.StatusOK, "ok")
 		})
-		RegisterSwaggerRouter(r)
+		RegisterSwaggerRouter(engine, config)
 	}
-}
 
-// RegisterPrivateGroup 注册私有路由组
-func RegisterPrivateGroup(r *gin.Engine, routerPrefix string) {
-	privateGroup := r.Group(routerPrefix)
-
-	sysRouter := router.RouterGroupApp.System
-
-	privateGroup.Use(middleware.RateLimit(global.CONFIG.System.RateLimit)).
+	privateGroup := engine.Group(prefix)
+	privateGroup.Use(middleware.RateLimit(config.System.RateLimit)).
 		Use(middleware.JWTAuth()).
 		Use(middleware.CasbinRbac())
 	{
-		sysRouter.InitSysRouter(privateGroup)
+		sysRouter.RegisterRoute(privateGroup)
 	}
-}
-
-func Routers() *gin.Engine {
-	r := gin.Default()
-	env := global.CONFIG.System.Env
-
-	// 如果是开发或测试环境则添加跨域中间件
-	if env == "dev" || env == "test" {
-		r.Use(middleware.Cors())
-	}
-	// 获取路由前缀
-	routerPrefix := global.CONFIG.System.RouterPrefix
-	RegisterPublicGroup(r, routerPrefix)
-	RegisterPrivateGroup(r, routerPrefix)
-	global.LOGGER.Info("router register success🎉")
-	return r
+	logger.Info("router register success🎉🎉🎉")
 }
