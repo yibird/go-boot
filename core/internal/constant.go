@@ -1,9 +1,9 @@
 package internal
 
 const (
-	ConfigEnv         = "GVA_CONFIG"
-	ConfigDefaultFile = "config.yaml"
-	ConfigTestFile    = "config.test.yaml"
-	ConfigDebugFile   = "config.debug.yaml"
-	ConfigReleaseFile = "config.release.yaml"
+	ConfigEnv         = "MODE"
+	ConfigDefaultFile = "config.yml"
+	ConfigTestFile    = "config.test.yml"
+	ConfigDebugFile   = "config.debug.yml"
+	ConfigReleaseFile = "config.release.yml"
 )

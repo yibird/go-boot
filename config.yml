@@ -2,26 +2,26 @@
 application:
   name: go-boot
   version: v0.0.1
-# Mysql配置
-mysql:
-  # 连接host
-  path: 127.0.0.1
-  # 端口
-  port: 3306
-  # 连接数据库
-  db-name: go-boot
-  # mysql用户名
-  username: root
-  # mysql密码
-  password: 123456
-  # 配置
-  config: charset=utf8&parseTime=true
-  # 空闲时最大连接数
-  max-idle-conns: 100
-  # 打开时最大连接数
-  max-open-conns: 200
-  # 连接最大生存时间(单位秒)
-  conn-max-lifetime: 300
+## Mysql配置
+#mysql:
+#  # 连接host
+#  path: 127.0.0.1
+#  # 端口
+#  port: 3306
+#  # 连接数据库
+#  db-name: go-boot
+#  # mysql用户名
+#  username: root
+#  # mysql密码
+#  password: 123456
+#  # 配置
+#  config: charset=utf8&parseTime=true
+#  # 空闲时最大连接数
+#  max-idle-conns: 100
+#  # 打开时最大连接数
+#  max-open-conns: 200
+#  # 连接最大生存时间(单位秒)
+#  conn-max-lifetime: 300
 
 # Redis配置
 redis:
