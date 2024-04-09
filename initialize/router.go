@@ -55,9 +55,12 @@ func RegisterRoutes(ew *EngineWrapper, config *config.Config,
 	}
 
 	privateGroup := engine.Group(prefix)
-	privateGroup.Use(middleware.RateLimit(config.System.RateLimit)).
-		Use(middleware.JWTAuth()).
-		Use(middleware.CasbinRbac())
+	privateGroup.Use(
+		middleware.Recover(),
+		middleware.RateLimit(config.System.RateLimit),
+		middleware.JWTAuth(),
+		middleware.CasbinRbac(),
+	)
 	{
 		sysRouter.RegisterRoute(privateGroup)
 	}
