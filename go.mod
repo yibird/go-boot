@@ -38,6 +38,7 @@ require (
 	github.com/google/wire v0.5.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
