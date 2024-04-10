@@ -66,8 +66,11 @@ zap:
 jwt:
   # jwt签名
   signing-key: qmPlus
-  expires-time: 7d
-  buffer-time: 1d
+  # 签名方法
+  signing-method: ES256
+  # 过期时间(单位秒)
+  expires: 3600
+  # jwt主体发行人
   issuer: qmPlus
 
 # CORS跨域配置

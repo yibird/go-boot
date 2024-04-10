@@ -5,7 +5,7 @@ mysql:
   # 端口
   port: 3306
   # 连接数据库
-  db-name: go-boot123
+  db-name: go-boot
   # mysql用户名
   username: root
   # mysql密码
