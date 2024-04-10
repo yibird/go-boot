@@ -2,11 +2,11 @@ package initialize
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/imdario/mergo"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go-boot/config"
 	"go-boot/middleware"
 	"go-boot/module/sys"
-	"go-boot/utils/structs"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -21,7 +21,10 @@ func RegisterSwaggerRouter(r *gin.Engine, config *config.Config) {
 	if env == "pro" {
 		return
 	}
-	structs.Merge(docs.SwaggerInfo, config.Swagger)
+	err := mergo.Merge(docs.SwaggerInfo, config.Swagger)
+	if err != nil {
+		return
+	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 
@@ -35,6 +38,7 @@ func NewEngine() (*EngineWrapper, error) {
 	return &EngineWrapper{r}, nil
 }
 
+// RegisterRoutes 注册公开和私有路由
 func RegisterRoutes(ew *EngineWrapper, config *config.Config,
 	logger *zap.Logger, sysRouter *sys.SysRouter) {
 	engine := ew.Engine

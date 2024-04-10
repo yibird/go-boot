@@ -6,10 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"github.com/redis/go-redis/v9"
+	"go-boot/config"
 	"go-boot/constant"
 	"go-boot/core"
 	"go-boot/core/model/res"
 	sys "go-boot/module/sys/user"
+	"go-boot/utils"
 	"image/color"
 	"time"
 )
@@ -17,12 +19,13 @@ import (
 type AuthApi struct {
 	Redis     *redis.Client
 	Validator *core.Validator
+	Config    *config.Config
 
 	UserService *sys.UserService
 }
 
-func NewAuthApi(Redis *redis.Client, Validator *core.Validator, UserService *sys.UserService) *AuthApi {
-	return &AuthApi{Redis, Validator, UserService}
+func NewAuthApi(Redis *redis.Client, Validator *core.Validator, Config *config.Config, UserService *sys.UserService) *AuthApi {
+	return &AuthApi{Redis, Validator, Config, UserService}
 }
 
 func createCaptcha() *base64Captcha.Captcha {
@@ -39,7 +42,8 @@ func createCaptcha() *base64Captcha.Captcha {
 
 var captcha = createCaptcha()
 var ctx = context.Background()
-var expiration = 60 * time.Second
+
+const expiration = 60 * time.Second
 
 // GetCaptcha 获取验证码
 func (s *AuthApi) GetCaptcha(c *gin.Context) {
@@ -72,11 +76,21 @@ func (s *AuthApi) AccountLogin(c *gin.Context) {
 		return
 	}
 	user := s.UserService.GetUserByAccount(query.Account)
-	fmt.Println("user:", user)
 	if user == nil {
 		res.ErrorWithMessage("user does not exist", c)
 		return
 	}
+	if query.Password != user.Password {
+		res.ErrorWithMessage("password error", c)
+		return
+	}
+	accessToken := utils.CreateToken(s.Config.JWT)
+	refreshToken := utils.CreateTokenWithExpires(s.Config.JWT, s.Config.JWT.Expires*2)
+	data := map[string]string{
+		"accessToken":  accessToken,
+		"refreshToken": refreshToken,
+	}
+	res.OkWithData(data, c)
 }
 
 // Register 注册账号

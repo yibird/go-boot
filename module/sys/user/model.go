@@ -7,6 +7,8 @@ import (
 
 type User struct {
 	model.BaseModel
+	Account  string `form:"account" json:"account"`
+	Password string `form:"password" json:"password"`
 }
 
 func (User) TableName() string {
